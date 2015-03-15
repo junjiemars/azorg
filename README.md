@@ -1,2 +1,6 @@
-# jni
-how java call c/c++ or c/c++ call java
+# dwarf
+demostrate jni programming
+
+## How to call c/c++ code from java code
+
+## How to call java code from c/c++ code
