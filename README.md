@@ -1,5 +1,5 @@
 # Azorg
-demostrate jni programming
+demostrates the jni programming
 
 ## Makefile
 * [Java makefile](http://www.cs.swarthmore.edu/~newhall/unixhelp/javamakefiles.html)
