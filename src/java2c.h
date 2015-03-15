@@ -9,10 +9,10 @@ extern "C" {
 #endif
 /*
  * Class:     Java2c
- * Method:    int_func_int
+ * Method:    c_square
  * Signature: (I)I
  */
-JNIEXPORT jint JNICALL Java_Java2c_int_1func_1int
+JNIEXPORT jint JNICALL Java_Java2c_c_1square
   (JNIEnv *, jobject, jint);
 
 #ifdef __cplusplus
