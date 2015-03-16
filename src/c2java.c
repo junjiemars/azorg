@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
     jint square;
 
     options[0].optionString = "-Djava.class.path=.";
-    vm_args.version = JNI_VERSION_1_2;
+    vm_args.version = JNI_VERSION_1_6;
     vm_args.nOptions = 1;
     vm_args.options = options;
     status = JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
