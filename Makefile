@@ -26,11 +26,13 @@ else
 	endif
 
 	ifeq ($(OS), Darwin)
-		INCLUDES += -I/System/Library/Frameworks/JavaVM.framework/Headers \
-					-I/Library/Java/JavaVirtualMachines/jdk1.8.0.jdk/Contents/Home/include/darwin
+		INCLUDES += -I$(JAVA_HOME)/include \
+					-I$(JAVA_HOME)/include/darwin
 		LIB_FLAGS += -dynamiclib
-		LD_JVM += -L/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home/jre/lib/server \
-				  -ljvm
+		LD_PATH = $(JAVA_HOME)/jre/lib/server/
+		LD_JVM += -L$(LD_PATH) -ljvm \
+				  -rpath $(LD_PATH) \
+				  -rpath src
 		CCFLAGS += -v -Wall
 		LIBJAVA2C = libjava2c.dylib
 	endif
@@ -67,4 +69,5 @@ clean:
 	$(RM) src/*.dylib
 	$(RM) src/*.so
 	$(RM) src/*.out
+	$(RM) -rf src/*.out.dSYM
 	$(RM) src/java2c.h
