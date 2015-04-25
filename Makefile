@@ -1,4 +1,4 @@
-## java compiler and compiler flags
+## java compiler/flags
 JFLAGS = 
 JCC = javac
 JAVA = java
@@ -8,6 +8,7 @@ JAVAH = javah
 .java.class:
 	$(JCC) $(JFLAGS) $*.java
 
+## c compiler/flags
 CC = cc
 ifeq ($(OS), Windows_NT)
 	CCFLAGS += -D WIN32
@@ -38,8 +39,19 @@ else
 	endif
 endif
 
+ODIR=build
+MKDIR=mkdir -p
+
+.PHONY: all
+
+all: dir java2c c2java
+dir: ${ODIR}
+$(ODIR):
+	${MKDIR} ${ODIR}
+
 JSRC = \
-	   src/Java2c.java
+	   src/Java2c.java \
+	   src/C2Java.java
 
 LIB_SRC = \
 		  src/java2c.c

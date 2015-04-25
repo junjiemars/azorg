@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
     status = JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
 
     if (status != JNI_ERR) {
-        clazz = (*env)->FindClass(env, "Java2c");
+        clazz = (*env)->FindClass(env, "C2Java");
         if (clazz) {
             mid = (*env)->GetStaticMethodID(env, clazz, "square", "(I)I");
             if (mid) {
