@@ -46,7 +46,7 @@ else
 		endif
 		CFLAGS += -I$(JAVA_HOME)/include \
 					-I$(JAVA_HOME)/include/linux  \
-					-Wall -g -O3 \
+					-Wall -g -O0 \
 					-D_GNU_SOURCE
 		LDFLAGS += -fPIC -shared
 		LD_PATH = ${JAVA_HOME}/jre/lib/${JVM_ARCH}/server
