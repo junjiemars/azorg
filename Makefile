@@ -27,12 +27,12 @@ else
 	OS := $(shell uname -s)
 
 	ifeq ($(OS), Linux) 
-		CFLAGS += -I$(JAVA_HOME)include \
-					-I$(JAVA_HOME)include/linux  \
+		CFLAGS += -I$(JAVA_HOME)/include \
+					-I$(JAVA_HOME)/include/linux  \
 					-Wall -g -O3
 		LDFLAGS += -fPIC -shared
 		LD_JVM = -L/usr/lib \
-				 -L$(JAVA_HOME)jre/lib/i386/server/ \
+				 -L$(JAVA_HOME)/jre/lib/i386/server/ \
 				 -ljvm
 		LIBJAVA2C = libjava2c.so
 	endif
