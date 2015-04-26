@@ -2,31 +2,29 @@ OUTDIR=build
 SRCDIR=src
 MKDIR=mkdir -p
 
-.PHONY: all
-
-all: dir java2c c2java
-dir: ${OUTDIR}
-$(OUTDIR):
-	${MKDIR} ${OUTDIR}
-
 ## java compiler/flags
 JFLAGS = 
 JCC = javac
 JAVA = java
 JAVAH = javah
 
+.PHONY: classes
+
+all: ${OUTDIR} JvmArch
+$(OUTDIR):
+	${MKDIR} ${OUTDIR}
+JvmArch: 
+	$(JCC) $(JFLAGS) -d $(OUTDIR) $(SRCDIR)/JvmArch.java
+
 .SUFFIXES: .java .class
 .java.class:
 	$(JCC) $(JFLAGS) -d $(OUTDIR) $*.java
 
 JAVA_SRC = \
-		   $(SRCDIR)/JvmArch.java \
 		   $(SRCDIR)/Java2c.java \
 		   $(SRCDIR)/C2Java.java
 
 classes: $(JAVA_SRC:.java=.class)
-
-default: classes
 
 ## cc compiler/flags
 CC=cc
@@ -36,7 +34,9 @@ ifeq ($(OS), Windows_NT)
 else 
 	OS := $(shell uname -s)
 	##JVM_ARCH := $(shell uname -m)
-	JVM_ARCH := $(shell java -classpath ${OUTDIR} JvmArch)
+	ifneq ($(wildcard $(OUTDIR)/JvmArch.class), )
+		JVM_ARCH := $(shell java -classpath ${OUTDIR} JvmArch)
+	endif
 
 	ifeq ($(OS), Linux) 
 		ifeq ($(JAVA_HOME), "")
@@ -44,12 +44,14 @@ else
 		endif
 		CFLAGS += -I$(JAVA_HOME)/include \
 					-I$(JAVA_HOME)/include/linux  \
-					-Wall -g -O3
+					-Wall -g -O3 \
+					-D_GNU_SOURCE
 		LDFLAGS += -fPIC -shared
-		LD_JVM = -L/usr/lib \
-				 -L$(JAVA_HOME)/jre/lib/${JVM_ARCH}/server/ \
+		LD_PATH = $(JAVA_HOME)/jre/lib/${JVM_ARCH}/server
+		LD_JVM = -L$(LD_PATH) \
 				 -ljvm
 		LIBJAVA2C = libjava2c.so
+		LD_RUN = LD_LIBRARY_PATH=${LD_PATH}:${LD_LIBRARY_PATH}
 	endif
 
 	ifeq ($(OS), Darwin)
@@ -82,7 +84,7 @@ java2c: $(LIBJAVA2C)
 
 c2java: classes
 	$(CC) $(CFLAGS) -o $(OUTDIR)/c2java.out $(C2JAVA_SRC) $(LD_JVM)
-	$(${OUTDIR}/c2java.out)
+	$(LD_RUN) ${OUTDIR}/c2java.out ${OUTDIR}
 
 
 clean:

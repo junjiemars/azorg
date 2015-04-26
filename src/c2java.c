@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #ifdef _WIN32
 #define PATH_SEPARATOR ';'
@@ -8,6 +9,10 @@
 #endif
 
 int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        printf("<c>%s need classpath option!\n", argv[0]);
+        return (0);
+    }
     JavaVMOption options[1];
     JNIEnv *env;
     JavaVM *jvm;
@@ -17,7 +22,10 @@ int main(int argc, char *argv[]) {
     jmethodID mid;
     jint square;
 
-    options[0].optionString = "-Djava.class.path=.";
+    //options[0].optionString = "-Djava.class.path=.";
+    if (0 >= asprintf(&options[0].optionString, "-Djava.class.path=%s", argv[1])) {
+        return (0);
+    }
     vm_args.version = JNI_VERSION_1_6;
     vm_args.nOptions = 1;
     vm_args.options = options;
@@ -34,8 +42,8 @@ int main(int argc, char *argv[]) {
         }
 
         (*jvm)->DestroyJavaVM(jvm);
-        return (0);
     }
 
-    return (-1);
+    free(options[0].optionString);
+    return (0);
 }
