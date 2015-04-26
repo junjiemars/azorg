@@ -1,3 +1,14 @@
+OUTDIR=build
+SRCDIR=src
+MKDIR=mkdir -p
+
+.PHONY: all
+
+all: dir java2c c2java
+dir: ${OUTDIR}
+$(OUTDIR):
+	${MKDIR} ${OUTDIR}
+
 ## java compiler/flags
 JFLAGS = 
 JCC = javac
@@ -6,80 +17,66 @@ JAVAH = javah
 
 .SUFFIXES: .java .class
 .java.class:
-	$(JCC) $(JFLAGS) $*.java
+	$(JCC) $(JFLAGS) -d $(OUTDIR) $*.java
 
 ## c compiler/flags
 CC = cc
 ifeq ($(OS), Windows_NT)
-	CCFLAGS += -D WIN32
+	CFLAGS += -D WIN32
 else 
 	OS := $(shell uname -s)
 
 	ifeq ($(OS), Linux) 
-		INCLUDES += -I$(JAVA_HOME)include \
-					-I$(JAVA_HOME)include/linux 
-		CCFLAGS += -Wall
-		LIB_FLAGS += -fPIC -shared
-		LIBJAVA2C = libjava2c.so
+		CFLAGS += -I$(JAVA_HOME)include \
+					-I$(JAVA_HOME)include/linux  \
+					-Wall -g -O3
+		LDFLAGS += -fPIC -shared
 		LD_JVM = -L/usr/lib \
 				 -L$(JAVA_HOME)jre/lib/i386/server/ \
 				 -ljvm
+		LIBJAVA2C = libjava2c.so
 	endif
 
 	ifeq ($(OS), Darwin)
-		INCLUDES += -I$(JAVA_HOME)/include \
-					-I$(JAVA_HOME)/include/darwin
-		LIB_FLAGS += -dynamiclib
+		CFLAGS += -I$(JAVA_HOME)/include \
+					-I$(JAVA_HOME)/include/darwin \
+					-v -Wall -g -O3
+		LDFLAGS += -dynamiclib
 		LD_PATH = $(JAVA_HOME)/jre/lib/server/
 		LD_JVM += -L$(LD_PATH) -ljvm \
 				  -rpath $(LD_PATH) \
 				  -rpath src
-		CCFLAGS += -v -Wall
 		LIBJAVA2C = libjava2c.dylib
 	endif
 endif
 
-ODIR=build
-MKDIR=mkdir -p
-
-.PHONY: all
-
-all: dir java2c c2java
-dir: ${ODIR}
-$(ODIR):
-	${MKDIR} ${ODIR}
 
 JSRC = \
-	   src/Java2c.java \
-	   src/C2Java.java
+	   $(SRCDIR)/Java2c.java \
+	   $(SRCDIR)/C2Java.java
 
-LIB_SRC = \
-		  src/java2c.c
+JAVA2C_SRC = \
+			 $(SRCDIR)/java2c.c
 
-BIN_SRC = \
-		  src/c2java.c
+C2JAVA_SRC = \
+		  $(SRCDIR)/c2java.c
 
 classes: $(JSRC:.java=.class)
 
 jniheaders: classes
-	$(JAVAH) -o src/java2c.h -cp src/ Java2c
+	$(JAVAH) -o $(SRCDIR)/java2c.h -cp $(OUTDIR) Java2c
 
-LIBJAVA2C: jniheaders
-	$(CC) $(CCFLAGS) $(LIB_FLAGS) $(INCLUDES) -o src/$(LIBJAVA2C) $(LIB_SRC)
+$(LIBJAVA2C): jniheaders $(JAVA2C_SRC)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $(OUTDIR)/$(LIBJAVA2C) $(JAVA2C_SRC)
 
-java2c: LIBJAVA2C
-	$(JAVA) -cp src/ -Djava.library.path=src/ Java2c
+java2c: $(LIBJAVA2C)
+	$(JAVA) -cp $(OUTDIR) -Djava.library.path=$(OUTDIR) Java2c
 
 c2java: classes
-	$(CC) $(CCFLAGS) -o src/c2java.out $(BIN_SRC) $(INCLUDES) $(LD_JVM)
-	$(src/c2java.out)
+	$(CC) $(CFLAGS) -o $(OUTDIR)/c2java.out $(C2JAVA_SRC) $(LD_JVM)
+	$(${OUTDIR}/c2java.out)
 
 default: classes
 
 clean:
-	$(RM) src/*.class
-	$(RM) src/*.dylib
-	$(RM) src/*.so
-	$(RM) src/*.out
-	$(RM) -rf src/*.out.dSYM
-	$(RM) src/java2c.h
+	$(RM) -r $(OUTDIR)/*

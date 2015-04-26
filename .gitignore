@@ -13,3 +13,4 @@
 hs_err_pid*
 *.out
 src/java2c.h
+build/
