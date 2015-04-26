@@ -10,7 +10,7 @@ JAVAH = javah
 
 .PHONY: classes
 
-all: ${OUTDIR} JvmArch
+all: ${OUTDIR} JvmArch classes
 $(OUTDIR):
 	${MKDIR} ${OUTDIR}
 JvmArch: 
