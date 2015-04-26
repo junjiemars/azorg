@@ -34,20 +34,22 @@ ifeq ($(OS), Windows_NT)
 else 
 	OS := $(shell uname -s)
 	##JVM_ARCH := $(shell uname -m)
-	ifneq ($(wildcard $(OUTDIR)/JvmArch.class), )
+	JVM_ARCH_CLASS = ${OUTDIR}/JvmArch.class
+	ifneq ($(wildcard $(JVM_ARCH_CLASS)),)
 		JVM_ARCH := $(shell java -classpath ${OUTDIR} JvmArch)
 	endif
 
 	ifeq ($(OS), Linux) 
-		ifeq ($(JAVA_HOME), "")
+		ifndef (JAVA_HOME)
 			JAVA_HOME := $(shell readlink -f `which java`|sed 's/\/bin\/java//g')
+			JAVAH = ${JAVA_HOME}/bin/javah
 		endif
 		CFLAGS += -I$(JAVA_HOME)/include \
 					-I$(JAVA_HOME)/include/linux  \
 					-Wall -g -O3 \
 					-D_GNU_SOURCE
 		LDFLAGS += -fPIC -shared
-		LD_PATH = $(JAVA_HOME)/jre/lib/${JVM_ARCH}/server
+		LD_PATH = ${JAVA_HOME}/jre/lib/${JVM_ARCH}/server
 		LD_JVM = -L$(LD_PATH) \
 				 -ljvm
 		LIBJAVA2C = libjava2c.so
