@@ -64,7 +64,7 @@ C2JAVA_SRC = \
 classes: $(JSRC:.java=.class)
 
 jniheaders: classes
-	$(JAVAH) -o $(SRCDIR)/java2c.h -cp $(OUTDIR) Java2c
+	$(JAVAH) -o $(SRCDIR)/java2c.h -classpath $(OUTDIR) Java2c
 
 $(LIBJAVA2C): jniheaders $(JAVA2C_SRC)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $(OUTDIR)/$(LIBJAVA2C) $(JAVA2C_SRC)
