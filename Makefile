@@ -30,7 +30,7 @@ classes: $(JAVA_SRC:.java=.class)
 CC=cc
 
 ifeq ($(OS), Windows_NT)
-	CFLAGS += -D WIN32
+	CCFLAGS += -D WIN32
 else 
 	OS := $(shell uname -s)
 	##JVM_ARCH := $(shell uname -m)
@@ -44,9 +44,9 @@ else
 			JAVA_HOME := $(shell readlink -f `which java`|sed 's/\/bin\/java//g')
 			JAVAH = ${JAVA_HOME}/bin/javah
 		endif
-		CFLAGS += -I$(JAVA_HOME)/include \
+		CCFLAGS += -I$(JAVA_HOME)/include \
 					-I$(JAVA_HOME)/include/linux  \
-					-Wall -g -O0 \
+					-Wall -g -O0 ${CCFLAGS}\
 					-D_GNU_SOURCE
 		LDFLAGS += -fPIC -shared
 		LD_PATH = ${JAVA_HOME}/jre/lib/${JVM_ARCH}/server
@@ -57,9 +57,9 @@ else
 	endif
 
 	ifeq ($(OS), Darwin)
-		CFLAGS += -I$(JAVA_HOME)/include \
+		CCFLAGS += -I$(JAVA_HOME)/include \
 					-I$(JAVA_HOME)/include/darwin \
-					-v -Wall -g -O3
+					-Wall -g -O3 ${CFLAGS}
 		LDFLAGS += -dynamiclib
 		LD_PATH = $(JAVA_HOME)/jre/lib/server/
 		LD_JVM += -L$(LD_PATH) -ljvm \
@@ -79,13 +79,13 @@ jniheaders: classes
 	$(JAVAH) -o $(SRCDIR)/java2c.h -classpath $(OUTDIR) Java2c
 
 $(LIBJAVA2C): jniheaders $(JAVA2C_SRC)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $(OUTDIR)/$(LIBJAVA2C) $(JAVA2C_SRC)
+	$(CC) $(CCFLAGS) $(LDFLAGS) -o $(OUTDIR)/$(LIBJAVA2C) $(JAVA2C_SRC)
 
 java2c: $(LIBJAVA2C)
 	$(JAVA) -cp $(OUTDIR) -Djava.library.path=$(OUTDIR) Java2c
 
 c2java: classes
-	$(CC) $(CFLAGS) -o $(OUTDIR)/c2java.out $(C2JAVA_SRC) $(LD_JVM)
+	$(CC) $(CCFLAGS) -o $(OUTDIR)/c2java.out $(C2JAVA_SRC) $(LD_JVM)
 	$(LD_RUN) ${OUTDIR}/c2java.out ${OUTDIR}
 
 
