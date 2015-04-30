@@ -16,8 +16,8 @@ make c2java
 
 ## Known issues
 ### To install Java Runtime 6 on Max OS X 
-when the other JRE version had been installed, your Mac remind you to install JRE 6
-to fix: 
+when the other JRE version had been installed, your Mac remind you to install JRE 6.
+The fix is easy: just to create the following directories
 ```shell
 sudo mkdir /System/Library/Java/JavaVirtualMachines/1.6.0.jdk/
 sudo mkdir /System/Library/Java/Support/Deploy.bundle/
