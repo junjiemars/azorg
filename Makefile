@@ -45,9 +45,9 @@ else
 			JAVAH = ${JAVA_HOME}/bin/javah
 		endif
 		CCFLAGS += -I$(JAVA_HOME)/include \
-					-I$(JAVA_HOME)/include/linux  \
-					-Wall -g -O0 ${CCFLAGS}\
-					-D_GNU_SOURCE
+				   -I$(JAVA_HOME)/include/linux  \
+				   -Wall -g -O3 ${CFLAGS}\
+				   -D_GNU_SOURCE
 		LDFLAGS += -fPIC -shared
 		LD_PATH = ${JAVA_HOME}/jre/lib/${JVM_ARCH}/server
 		LD_JVM = -L$(LD_PATH) \
@@ -58,8 +58,8 @@ else
 
 	ifeq ($(OS), Darwin)
 		CCFLAGS += -I$(JAVA_HOME)/include \
-					-I$(JAVA_HOME)/include/darwin \
-					-Wall -g -O3 ${CFLAGS}
+				   -I$(JAVA_HOME)/include/darwin \
+				   -Wall -g -O3 ${CFLAGS}
 		LDFLAGS += -dynamiclib
 		LD_PATH = $(JAVA_HOME)/jre/lib/server/
 		LD_JVM += -L$(LD_PATH) -ljvm \
