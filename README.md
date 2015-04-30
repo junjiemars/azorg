@@ -1,16 +1,23 @@
 # Azorg
 demostrates the jni programming
 
-## How to call c/c++ code from java code
+## How to play
+Just use make to play around, 
 
-## How to call java code from c/c++ code
+### How to call c/c++ code from java code
+```shell
+make java2c
+```
 
-## Note
-The OS X will notifing that you need to install Java Runtime 6 after you run
+### How to call java code from c/c++ code
 ```shell
 make c2java
 ```
-The fix is easy: just to create the following directories
+
+## Known issues
+### To install Java Runtime 6 on Max OS X 
+when the other JRE version had been installed, your Mac remind you to install JRE 6
+to fix: 
 ```shell
 sudo mkdir /System/Library/Java/JavaVirtualMachines/1.6.0.jdk/
 sudo mkdir /System/Library/Java/Support/Deploy.bundle/
