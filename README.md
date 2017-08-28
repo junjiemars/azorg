@@ -2,7 +2,7 @@
 demostrates the jni programming
 
 **NOTE**: 
-The more clear JNI example can be found in ```https://github.com/junjiemars/c/ffi/jni```, 
+The more clear JNI example can be found in ```src/ffi/jni``` in ```https://github.com/junjiemars/c```, 
 and it can be easy to compile and run on MacOS, Linux, and Windows via [Nore](https://github.com/junjiemars/nore) 
 
 
