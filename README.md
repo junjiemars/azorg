@@ -1,6 +1,11 @@
 # Azorg
 demostrates the jni programming
 
+**NOTE**: 
+The more clear JNI example can be found in ```https://github.com/junjiemars/c/ffi/jni```, 
+and it can be easy to compile and run on MacOS, Linux, and Windows via [Nore](https://github.com/junjiemars/nore) 
+
+
 ## How to play
 Just use make to play around, 
 
